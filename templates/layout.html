@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
+ <head>
+   <title>Book Club - {{ page_title }}</title>
+ </head>
+ <body>
+   {% include 'header.html' %}
+   {% include 'nav.html' %}
+   {% block content %}{% endblock %}
+   {% include 'footer.html' %}
+   
+ </body>
+</html>
