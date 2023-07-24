@@ -16,8 +16,8 @@ class Book(Base):
   author = Column("author", String)
   genre = Column("genre", String)
   summary = Column("summary", String)
-
-
+#image column here or new table for images?
+  
   def __init__(self, book_id, title, author, genre, summary):
     self.book_id = book_id
     self.title = title
@@ -55,7 +55,6 @@ class Book(Base):
   def set_summary():
     self.summary = summary
 
-
 ##REVIEW CLASS
 class Review(Base):
   __tablename__ = "reviews"
@@ -85,6 +84,8 @@ class Review(Base):
 
   def set_book():
     self.book = book
+
+#members table based on login
 
 #DataBase
 db_url = "sqlite:///mydb.db" 
