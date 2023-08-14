@@ -149,15 +149,16 @@ def root():
 def members():
   return render_template('members.html', page_title= 'MEMBERs')
 
+##Display list of books
 @app.route('/all_books')
 def all_books():
   Session = sessionmaker(bind=engine)
   session =Session()
-  results = session.query(Book).all()
-  print(results)
-  return render_template('all_books.html', page_title= 'all_books', query_results = results)
+  books = session.query(Book).all()
+  print(books)
+  return render_template('all_books.html', page_title= 'all_books', query_results = books)
   
-
+##Route for adding books
 @app.route('/add_book',  methods=['POST', 'GET'])
 def add_book():
   if request.method == "POST":
