@@ -66,7 +66,10 @@ class Book(Base):
 
   def set_url(self, url):
     self.url = url
-
+    
+  def __repr__(self):
+    return f"{self.book_id}, {self.title}, {self.author}, {self.genre},{self.summary}, {self.url} "
+    
 ##REVIEW CLASS
 class Review(Base):
   __tablename__ = "reviews"
@@ -100,6 +103,7 @@ class Review(Base):
 #members table based on login
 class Members(Base):
   __tablename__ = "members"
+  member_id = Column("member_id", Integer, primary_key=True)
   email = Column("email", String)
   password = Column("password", String)
 
@@ -127,6 +131,12 @@ else:
   Base.metadata.create_all(bind=engine)
   Session = sessionmaker(bind=engine)
   session = Session()
+  b1 = Book(1, "The Seven Husbands of Evelyn Hugo", "Taylor Jenkins Reid", "Romance", "The Seven Husbands of Evelyn Hugo tells the tale of the 79-year-old main character (Evelyn Hugo) and her life as an actress in the golden age of Hollywood", None)
+  b2 = Book(2, "Fourth Wing", "Rebbeca Yarros", "Fantasy", "Fourth Wing is about a war college where some students become dragon riders and obtain magical powers.", None)
+
+  session.add(b1)
+  session.add(b2)
+  session.commit()
 
 app = Flask(__name__)
 # basic route
@@ -140,7 +150,16 @@ def members():
 
 @app.route('/all_books')
 def all_books():
-  return render_template('all_books.html', page_title= 'all_books')
+  Session = sessionmaker(bind=engine)
+  session =Session()
+  results = session.query(Book).all()
+  print(results)
+  return render_template('all_books.html', page_title= 'all_books', query_results = results)
   
+
+@app.route('/add_book')
+def add_book():
+  return render_template('add_book.html', page_title= 'add_book')
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)

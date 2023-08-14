@@ -13,6 +13,7 @@ sqlalchemy = "2.0.19"
 sqlalchemy-utils = "0.41.1"
 dothings = "0.2"
 sqlalchemyutils = "0.0.7"
+flask-sqlalchemy = "3.0.5"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

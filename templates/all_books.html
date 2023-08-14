@@ -2,5 +2,13 @@
 {% block content %}
 
 <h2>Books We Have Read: </h2>
-
+<ul>
+    {% for result in query_results %}
+      <li>{{ result.title }} </li>
+        <ul>
+          <li>{{ result.author }}</li>
+          <li>{{ result.genre }}</li>
+        </ul>    
+    {% endfor %}
+</ul>
 {% endblock %}
