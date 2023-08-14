@@ -1,10 +1,13 @@
 #Book Club 2023
 
-from flask import Flask, render_template, abort
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer,CHAR
+from io import BytesIO
+from flask import Flask, render_template, request, send_file, Response
+from flask_sqlalchemy import SQLAlchemy 
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer,CHAR, Text, LargeBinary, update
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils.functions import database_exists
+from sqlalchemy_utils.functions import database_exists, create_database #import to check if database exists
+from werkzeug.utils import secure_filename
 
 Base = declarative_base()
 
@@ -16,44 +19,53 @@ class Book(Base):
   author = Column("author", String)
   genre = Column("genre", String)
   summary = Column("summary", String)
+  url = Column("imageURL", String(255))
+  
 #image column here or new table for images?
   
-  def __init__(self, book_id, title, author, genre, summary):
+  def __init__(self, book_id, title, author, genre, summary, url=None):
     self.book_id = book_id
     self.title = title
     self.author = author
     self.genre = genre
     self.summary = summary
-
-  def get_book_id():
+    self.url = url
+    
+  def get_book_id(self):
     return self.book_id
 
-  def get_title():
+  def get_title(self):
     return self.title
 
-  def get_author():
+  def get_author(self):
     return self.author
 
-  def get_genre():
+  def get_genre(self):
     return self.genre
 
-  def get_summary():
+  def get_summary(self):
     return self.summary
 
-  def set_book_id():
+  def get_url(self):
+    return self.url
+
+  def set_book_id(self, book_id):
     self.book_id = book_id
 
-  def set_title():
+  def set_title(self, title):
     self.title = title
 
-  def set_author():
+  def set_author(self, author):
     self.author = author
 
-  def set_genre():
+  def set_genre(self, genre):
     self.genre = genre
 
-  def set_summary():
+  def set_summary(self, summary):
     self.summary = summary
+
+  def set_url(self, url):
+    self.url = url
 
 ##REVIEW CLASS
 class Review(Base):
@@ -67,25 +79,42 @@ class Review(Base):
     self.review = review
     self.book = book
 
-  def get_review_id():
+  def get_review_id(self):
     return self.review_id
 
-  def get_review():
+  def get_review(self):
     return self.review
 
-  def get_book():
+  def get_book(self):
     return self.book
 
-  def set_review_id():
+  def set_review_id(self, review_id):
     self.review_id = review_id
 
-  def set_review():
+  def set_review(self, review):
     self.review = review
 
-  def set_book():
+  def set_book(self, book):
     self.book = book
 
 #members table based on login
+class Members(Base):
+  __tablename__ = "members"
+  email = Column("email", String)
+  password = Column("password", String)
+
+  def __init__(self, email, password):
+    self.email = email
+    self.password = password
+
+  def get_email(self):
+    return self.email
+
+  def set_email(self, email):
+    self.email = email
+
+  def set_password(self, password):
+    self.password = password
 
 #DataBase
 db_url = "sqlite:///mydb.db" 
@@ -98,7 +127,6 @@ else:
   Base.metadata.create_all(bind=engine)
   Session = sessionmaker(bind=engine)
   session = Session()
-
 
 app = Flask(__name__)
 # basic route
