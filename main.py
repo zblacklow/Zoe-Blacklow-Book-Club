@@ -8,6 +8,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils.functions import database_exists, create_database #import to check if database exists
 from werkzeug.utils import secure_filename
+import os
 
 Base = declarative_base()
 
@@ -157,8 +158,28 @@ def all_books():
   return render_template('all_books.html', page_title= 'all_books', query_results = results)
   
 
-@app.route('/add_book')
+@app.route('/add_book',  methods=['POST', 'GET'])
 def add_book():
+  if request.method == "POST":
+    book_id = request.form.get("book_id")
+    title = request.form.get("title")
+    author = request.form.get("author")
+    genre = request.form.get("genre")
+    summary = request.form.get("summary")
+    
+    #for image
+    image = request.files['image']
+    url = secure_filename(image.filename)
+    image.save(os.path.join('static/uploads', url))
+    
+    #connection
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    book_id = int(book_id)
+    b = Book(book_id, title, author, genre, summary, url)
+    session.add(b)
+    session.commit()
   return render_template('add_book.html', page_title= 'add_book')
 
 if __name__ == "__main__":

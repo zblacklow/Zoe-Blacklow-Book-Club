@@ -7,8 +7,11 @@
       <li>{{ result.title }} </li>
         <ul>
           <li>{{ result.author }}</li>
-          <li>{{ result.genre }}</li>
         </ul>    
+      {% if result.get_url() is string%}
+      {% set url =  "/static/uploads/" + result.get_url() %}
+      <img src= {{url}} alt="my image" width="120" height="180" />
+      {% endif %}
     {% endfor %}
 </ul>
 {% endblock %}
