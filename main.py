@@ -20,9 +20,10 @@ class Book(Base):
   author = Column("author", String)
   genre = Column("genre", String)
   summary = Column("summary", String)
-  url = Column("imageURL", String(255))
-  
-#image column here or new table for images?
+  url = Column("imageURL", String(255))#images
+  #one to many
+  reviews_written = relationship('Review', foriegn_keys=[Review.book],backref='book', lazy='dynamic')
+
   
   def __init__(self, book_id, title, author, genre, summary, url=None):
     self.book_id = book_id
