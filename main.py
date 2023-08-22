@@ -145,9 +145,11 @@ app = Flask(__name__)
 def root():
     return render_template("home.html", page_title='HOME')
   
-@app.route('/members')
-def members():
-  return render_template('members.html', page_title= 'MEMBERs')
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+  if request.method == "POST":
+    
+  return render_template('signup.html', page_title= 'SIGNUP')
 
 ##Display list of books
 @app.route('/all_books')
