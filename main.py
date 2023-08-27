@@ -20,9 +20,10 @@ class Review(Base):
   review = Column("review", String)
   book = Column(Integer, ForeignKey("books.book_id"))
 
-  def __init__(self, review_id, review):
+  def __init__(self, review_id, review, book):
     self.review_id = review_id
     self.review = review
+    self.book = book
 
   def get_review_id(self):
     return self.review_id
@@ -53,7 +54,6 @@ class Book(Base):
   url = Column("imageURL", String(255))#images
   #one to many
   reviews_written = relationship('Review', foreign_keys=[Review.book], backref='book_of', lazy='dynamic')
-
   
   def __init__(self, book_id, title, author, genre, summary, url=None):
     self.book_id = book_id
@@ -155,10 +155,19 @@ def signup():
 @app.route('/all_books')
 def all_books():
   Session = sessionmaker(bind=engine)
-  session =Session()
+  session = Session()
   books = session.query(Book).all()
-  print(books)
   return render_template('all_books.html', page_title= 'all_books', query_results = books)
+
+@app.route('/books/<int:book_id>')
+def book(book_id):
+  print(book_id)
+  Session = sessionmaker(bind=engine)
+  session =Session()
+  results = session.query(Book).filter(Book.book_id == book_id).first()
+  print(results)
+  print(book)
+  return render_template('book.html', page_title= 'Book_Details', query_results = results)
   
 ##Route for adding books
 @app.route('/add_book',  methods=['POST', 'GET'])
@@ -194,15 +203,21 @@ def add_review():
     review_id = request.form.get("review_id")
     book = request.form.get("book")
     review = request.form.get("review")
+    if book == None:
+      print("error book not working")
+    else:
+      print(book)
     #connection
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
+    b = session.query(Book).filter(Book.book_id == book)
+    print(b)
     review_id = int(review_id)
-    book = int(book)
     r = Review(review_id, review, book)
     print(r)
     session.add(r)
+    b.reviews_written = r
     session.commit()
   return render_template('add_review.html', books=books, page_title='Add Review')
 

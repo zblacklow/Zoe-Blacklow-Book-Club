@@ -4,13 +4,12 @@
 <h2>Books We Have Read: </h2>
 <ul>
     {% for books in query_results %}
-      <li>{{ books.title }} </li>
-        <ul>
-          <li>{{ books.author }}</li>
-        </ul>   
+      
+      <li><a href="/books/{{ books.book_id }}">{{ books.title }}</li>
+      
       {% if books.get_url() is string%}
-      {% set url =  "/static/uploads/" + books.get_url() %}
-      <img src= {{url}} alt="my image" width="120" height="180" />
+        {% set url =  "/static/uploads/" + books.get_url() %}
+        <img src= {{url}} alt="my image" width="120" height="180" />
       {% endif %}
 </br>
     {% endfor %}

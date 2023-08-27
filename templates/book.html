@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h2> {{query_results.title}} </h2>
+    {% if query_results.get_url() is string%}
+          {% set url =  "/static/uploads/" + query_results.get_url() %}
+          <img src= {{url}} alt="my image" width="120" height="180" />
+          {% endif %}
+    <p>
+      {{query_results.author}}</br>
+      {{query_results.genre}}</br>
+      {{query_results.summary}}
+  </p>
+ 
+{% endblock %}
