@@ -4,7 +4,7 @@ from io import BytesIO
 from flask import Flask, render_template, request, send_file, Response
 from flask_sqlalchemy import SQLAlchemy 
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer,CHAR, Text, LargeBinary, update
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils.functions import database_exists, create_database #import to check if database exists
 from werkzeug.utils import secure_filename
@@ -12,7 +12,37 @@ import os
 
 Base = declarative_base()
 
-##BOOK CLASS
+
+############################REVIEW CLASS###################################
+class Review(Base):
+  __tablename__ = "reviews"
+  review_id = Column("review_id", Integer, primary_key=True)
+  review = Column("review", String)
+  book = Column(Integer, ForeignKey("books.book_id"))
+
+  def __init__(self, review_id, review):
+    self.review_id = review_id
+    self.review = review
+
+  def get_review_id(self):
+    return self.review_id
+
+  def get_review(self):
+    return self.review
+
+  def get_book(self):
+    return self.book
+
+  def set_review_id(self, review_id):
+    self.review_id = review_id
+
+  def set_review(self, review):
+    self.review = review
+
+  def set_book(self, book):
+    self.book = book
+
+#######################BOOK CLASS##########################################
 class Book(Base):
   __tablename__ = "books"
   book_id = Column("book_id", Integer, primary_key=True)
@@ -22,7 +52,7 @@ class Book(Base):
   summary = Column("summary", String)
   url = Column("imageURL", String(255))#images
   #one to many
-  reviews_written = relationship('Review', foriegn_keys=[Review.book],backref='book', lazy='dynamic')
+  reviews_written = relationship('Review', foreign_keys=[Review.book], backref='book_of', lazy='dynamic')
 
   
   def __init__(self, book_id, title, author, genre, summary, url=None):
@@ -72,37 +102,7 @@ class Book(Base):
   def __repr__(self):
     return f"{self.book_id}, {self.title}, {self.author}, {self.genre},{self.summary}, {self.url} "
     
-##REVIEW CLASS
-class Review(Base):
-  __tablename__ = "reviews"
-  review_id = Column("review_id", Integer, primary_key=True)
-  review = Column("review", String)
-  book = Column(Integer, ForeignKey("books.book_id"))
-
-  def __init__(self, review_id, review, book):
-    self.review_id = review_id
-    self.review = review
-    self.book = book
-
-  def get_review_id(self):
-    return self.review_id
-
-  def get_review(self):
-    return self.review
-
-  def get_book(self):
-    return self.book
-
-  def set_review_id(self, review_id):
-    self.review_id = review_id
-
-  def set_review(self, review):
-    self.review = review
-
-  def set_book(self, book):
-    self.book = book
-
-#members table based on login
+######################MEMBERS##############################################
 class Members(Base):
   __tablename__ = "members"
   member_id = Column("member_id", Integer, primary_key=True)
@@ -148,7 +148,6 @@ def root():
   
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-  if request.method == "POST":
     
   return render_template('signup.html', page_title= 'SIGNUP')
 
@@ -184,7 +183,28 @@ def add_book():
     b = Book(book_id, title, author, genre, summary, url)
     session.add(b)
     session.commit()
-  return render_template('add_book.html', page_title= 'add_book')
+  return render_template('add_book.html', page_title= 'Add_Book')
+
+@app.route('/add_review', methods=['POST', 'GET'])
+def add_review():
+  Session = sessionmaker(bind=engine)
+  session =Session()
+  books = session.query(Book).all()
+  if request.method == "POST":
+    review_id = request.form.get("review_id")
+    book = request.form.get("book")
+    review = request.form.get("review")
+    #connection
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    review_id = int(review_id)
+    book = int(book)
+    r = Review(review_id, review, book)
+    print(r)
+    session.add(r)
+    session.commit()
+  return render_template('add_review.html', books=books, page_title='Add Review')
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
