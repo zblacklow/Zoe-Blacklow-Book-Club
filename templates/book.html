@@ -8,7 +8,16 @@
     <p>
       {{query_results.author}}</br>
       {{query_results.genre}}</br>
-      {{query_results.summary}}
+      {{query_results.summary}}</br></br>
+
+    <h3>Reviews: </h3>
+    <div id='reviews'>
+    {% for review in reviews %}
+      {{ review.review }}</br>
+    {% endfor %}  
+    </div>
+    <a href="/add_review">Add a Review</a>
+    
   </p>
  
 {% endblock %}

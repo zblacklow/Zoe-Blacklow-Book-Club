@@ -7,8 +7,6 @@ header {
   margin-left: 0px;
 }
 
-
-
 footer {
   text-align: center;
   background: #90d3ea;
@@ -57,4 +55,10 @@ input[type=short_text] {
   border: 2px solid lightblue;
   width: 10%;
   border-radius: 6px;
+}
+
+#reviews {
+  background-color: #8fe9ff ;
+  border-radius: 6px;
+  padding: 5px 15px;
 }

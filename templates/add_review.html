@@ -4,9 +4,6 @@
 <h2>Add a Review: </h2>
 <form action="{{ url_for("add_review")}}" method="post" enctype="multipart/form-data">
 
-<label for="review_id">Review ID: </label>
-<input type="short_text" id="review_id" name="review_id" placeholder="number"> </br></br>
-
 <label for="book">Book: </label>
 <select name="book" id='book'>
   {% for book in books %}
@@ -17,9 +14,6 @@
 </br></br>
 <label for="review">Review: </label></br>
 <input type="long_text" id="review" name="review" placeholder="Review"> </br></br>
-
-
-
 
 <button type="submit">Submit</button></br>
 </form>
