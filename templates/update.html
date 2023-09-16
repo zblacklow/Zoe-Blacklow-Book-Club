@@ -1,24 +1,22 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h2>Edit {{ title }}: </h2>
+<h2>Edit {{ book.title }}: </h2>
 
 <form action="/update/{{ids}}" method="post" enctype="multipart/form-data">
 
 <label for="title">Title: </label></br>
-<input type="text" id="title" name="title" placeholder="{{ book.title }}" value="{{ book.title }}"> </br></br>
+<input type="text" id="title" name="title" value="{{ book.title }}"> </br></br>
 
 <label for="author">Author: </label></br>
-<input type="text" id="author" name="author" placeholder="author" value="{{ book.author }}"> </br>
+<input type="text" id="author" name="author" value="{{ book.author }}"> </br>
 </br>
   
 <label for="genre">Genre: </label></br>
-<input type="text" id="genre" name="genre" placeholder="genre" value="{{ book.genre }}"> </br></br>
+<input type="text" id="genre" name="genre" value="{{ book.genre }}"> </br></br>
 
 <label for="summary">Summary: </label></br>
-<input type="long_text" id="summary" name="summary" placeholder="short description" value="{{ book.summary }}"> </br></br>
-
-
+<input type="long_text" id="summary" name="summary" value="{{ book.summary }}"> </br></br>
 
 <button type="submit" name="edit_button" value="Save">Save</button></br>
  

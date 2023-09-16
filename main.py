@@ -220,11 +220,11 @@ def edit_book():
   books = session.query(Book).all()
   if request.method == "POST":
     book_chosen = request.form.get("book")
-    return redirect(url_for('edit', ids = book_chosen))
+    return redirect(url_for('update', ids = book_chosen))
   return render_template('edit_book.html', books=books, page_title='Edit a Book')
 
-@app.route('/edit/<ids>', methods=['POST', 'GET'])
-def edit(ids):
+@app.route('/update/<ids>', methods=['POST', 'GET'])
+def update(ids):
   print(ids)
   Base.metadata.create_all(bind=engine)
   Session = sessionmaker(bind=engine)
@@ -232,22 +232,25 @@ def edit(ids):
   book_id = int(ids)
   book = session.query(Book).filter(Book.book_id == book_id).first()
   print(book.title)
-  if request.method == "POST":
-    if request.form['edit_button'] == "Save":
-      book.title = request.form.get("title")
-      book.author = request.form.get("author")
-      book.genre = request.form.get("genre")
-      book.summary = request.form.get("summary")
+  if request.method == 'POST':
+    if request.form['edit_button'] =="Save":
+      print("save button clicked")
+      book.title = request.form['title']
+      book.author = request.form['author']
+      book.genre = request.form['genre']
+      book.summary = request.form['summary']
       session.commit()
-      return redirect(url_for('book', book_id=book_id ))
-    elif request.form['edit_button'] == "Delete":
-      print("book deleted")
+      return redirect(url_for('book', book_id=book_id))
+      
+    elif request.form['edit_button'] =="Delete":
+      print("book delete button has been pressed")
       session.delete(book)
       session.commit()
-      return redirect(url_for('home'))
-    else:
-      print("not working")
-  return render_template('edit.html', book=book, page_title='Edit')
+      print("book has been deleted")
+      return redirect(url_for('all_books'))
+      
+    print("getting from update")
+  return render_template('update.html', book=book, ids=book_id, page_title='UPDATE')
       
 ###########################  add Reviews #######################################
 #route to add a review
