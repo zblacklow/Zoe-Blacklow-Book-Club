@@ -1,7 +1,7 @@
 #Book Club 2023
 #import relevant functions from packages
 from io import BytesIO
-from flask import Flask, render_template, request, send_file, Response, redirect, url_for
+from flask import Flask, render_template, request, send_file, Response, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy 
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer,CHAR, Text, update, func
 from sqlalchemy.orm import declarative_base, relationship
@@ -110,28 +110,6 @@ class Book(Base):
   #return all book info  
   def __repr__(self):
     return f"{self.book_id}, {self.title}, {self.author}, {self.genre},{self.summary}, {self.url} "
-    
-######################MEMBERS##############################################
-#class for members table used for login
-class Members(Base):
-  __tablename__ = "members"
-  member_id = Column("member_id", Integer, primary_key=True)
-  email = Column("email", String)
-  password = Column("password", String)
-
-  def __init__(self, email, password):
-    self.email = email
-    self.password = password
-
-#get and set methods
-  def get_email(self):
-    return self.email
-
-  def set_email(self, email):
-    self.email = email
-
-  def set_password(self, password):
-    self.password = password
 
 #DataBase
 db_url = "sqlite:///mydb.db" 
@@ -162,11 +140,6 @@ def string_length(min, max, string):
 @app.route('/')
 def root():
     return render_template("home.html", page_title='HOME')
-  
-@app.route('/signup', methods=['POST', 'GET'])
-def signup():
-    
-  return render_template('signup.html', page_title= 'SIGNUP')
 
 ############################ Display books #######################################
 #Books displayed with title and image
@@ -196,9 +169,21 @@ def add_book():
   if request.method == "POST":
     #get info from add book form
     title = request.form.get("title")
+    if string_length(1, 50, title) == False:
+      message = "invalid title"
+      return redirect(url_for('error_404', message = message))
     author = request.form.get("author")
+    if string_length(3, 25, author) == False:
+      message = "invalid author"
+      return redirect(url_for('error_404', message = message))
     genre = request.form.get("genre")
+    if string_length(2, 15, genre) == False:
+      message = "invalid genre"
+      return redirect(url_for('error_404', message = message))
     summary = request.form.get("summary")
+    if string_length(5, 100, summary) == False:
+      message = "invalid summary"
+      return redirect(url_for('error_404', message = message))
     #get image from files
     image = request.files['image']
     url = secure_filename(image.filename)
@@ -211,18 +196,59 @@ def add_book():
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
-    max_id = session.query(func.max(Book.book_id)).scalar()
-    print("highest book id is: ", max_id)
-    book_id = 1 + max_id
-    #add book to database
-    if len(url) == 0:
-      b = Book(book_id, title, author, genre, summary, None)
+    check_book = session.query(Book).filter(Book.title == title)
+    if check_book == None:
+      max_id = session.query(func.max(Book.book_id)).scalar()
+      print("highest book id is: ", max_id)
+      book_id = 1 + max_id
+      #add book to database
+      if len(url) == 0:
+        b = Book(book_id, title, author, genre, summary, None)
+      else:
+        b = Book(book_id, title, author, genre, summary, url)
+      session.add(b)
+      session.commit()
     else:
-      b = Book(book_id, title, author, genre, summary, url)
-    session.add(b)
-    session.commit()
+      print("Book already exists")
   return render_template('add_book.html', page_title= 'Add_Book')
 
+#edit book page
+@app.route('/edit_book', methods=['POST','GET'])
+def edit_book():
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  books = session.query(Book).all()
+  if request.method == "POST":
+    book_chosen = request.form.get("book")
+    return redirect(url_for('edit', ids = book_chosen))
+  return render_template('edit_book.html', books=books, page_title='Edit a Book')
+
+@app.route('/edit/<ids>', methods=['POST', 'GET'])
+def edit(ids):
+  print(ids)
+  Base.metadata.create_all(bind=engine)
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  book_id = int(ids)
+  book = session.query(Book).filter(Book.book_id == book_id).first()
+  print(book.title)
+  if request.method == "POST":
+    if request.form['edit_button'] == "Save":
+      book.title = request.form.get("title")
+      book.author = request.form.get("author")
+      book.genre = request.form.get("genre")
+      book.summary = request.form.get("summary")
+      session.commit()
+      return redirect(url_for('book', book_id=book_id ))
+    elif request.form['edit_button'] == "Delete":
+      print("book deleted")
+      session.delete(book)
+      session.commit()
+      return redirect(url_for('home'))
+    else:
+      print("not working")
+  return render_template('edit.html', book=book, page_title='Edit')
+      
 ###########################  add Reviews #######################################
 #route to add a review
 @app.route('/add_review', methods=['POST', 'GET'])
@@ -236,6 +262,9 @@ def add_review():
     #get info from form
     book = request.form.get("book")
     review = request.form.get("review")
+    if string_length(1, 100, review) == False:
+      message = "invalid review"
+      return redirect(url_for('error_404', message = message))
     #new connection
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
@@ -253,6 +282,12 @@ def add_review():
     session.commit()
     return redirect(url_for('book', book_id=book ))
   return render_template('add_review.html', books=books, page_title='Add Review')
+
+@app.route('/404/<message>')
+def error_404(message):
+  print(message)
+  return render_template('404.html', message=message, page_title='Error 404')
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)

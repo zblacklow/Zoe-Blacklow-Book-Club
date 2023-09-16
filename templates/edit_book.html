@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h2>Edit a Book: </h2>
+<form action="{{ url_for("edit_book")}}" method="post" enctype="multipart/form-data">
+
+<label for="book">Book: </label>
+<select name="book" id='book'>
+  {% for book in books %}
+    <option value={{book.book_id}}>{{book.title}}</option>
+  {% endfor %}
+</select>
+
+<button type="submit">Submit</button></br>
+</form>
+
+{% endblock %}
