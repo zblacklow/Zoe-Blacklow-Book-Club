@@ -5,13 +5,13 @@
 <ul>
     {% for books in query_results %}
       
-      <li><a href="/books/{{ books.book_id }}">{{ books.title }}</li>
+      <li><a href="/books/{{ books.book_id }}">{{ books.title }}</br>
       
       {% if books.get_url() is string%}
         {% set url =  "/static/uploads/" + books.get_url() %}
         <img src= {{url}} alt="my image" width="120" height="180" />
-      {% endif %}
-</br>
+      {% endif %}</li>
+</br></br>
     {% endfor %}
 </ul>
 {% endblock %}

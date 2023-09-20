@@ -6,18 +6,17 @@
           <img src= {{url}} alt="my image" width="120" height="180" />
           {% endif %}
     <p>
-      {{query_results.author}}</br>
-      {{query_results.genre}}</br>
-      {{query_results.summary}}</br></br>
+      Author: {{query_results.author}}</br>
+      Genre: {{query_results.genre}}</br>
+      Summary: {{query_results.summary}}</br></br>
 
     <h3>Reviews: </h3>
     <div id='reviews'>
     {% for review in reviews %}
-      {{ review.review }}</br>
+      <li>{{ review.review }}</li></br>
     {% endfor %}  
     </div>
     <a href="/add_review">Add a Review</a>
-    
   </p>
  
 {% endblock %}

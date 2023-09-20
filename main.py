@@ -10,10 +10,6 @@ from sqlalchemy_utils.functions import database_exists, create_database #import 
 from werkzeug.utils import secure_filename
 import os
 
-def connection():
-  Session = sessionmaker(bind=engine)
-  session = Session()
-
 Base = declarative_base()
 ############################REVIEW CLASS###################################
 #class to store reviews
@@ -159,6 +155,7 @@ def book(book_id):
   session =Session()
   #info for specific book
   results = session.query(Book).filter(Book.book_id == book_id).first()
+  print(results.url)
   #reviews for book
   reviews = session.query(Review).filter(Review.book == book_id)
   return render_template('book.html', page_title= 'Book_Details', query_results = results, reviews = reviews)
@@ -170,46 +167,41 @@ def add_book():
     #get info from add book form
     title = request.form.get("title")
     if string_length(1, 50, title) == False:
-      message = "invalid title"
-      return redirect(url_for('error_404', message = message))
+      message = "Invalid Title"
+      return redirect(url_for('error_406', message = message))
     author = request.form.get("author")
     if string_length(3, 25, author) == False:
-      message = "invalid author"
-      return redirect(url_for('error_404', message = message))
+      message = "Invalid Author"
+      return redirect(url_for('error_406', message = message))
     genre = request.form.get("genre")
     if string_length(2, 15, genre) == False:
-      message = "invalid genre"
-      return redirect(url_for('error_404', message = message))
+      message = "Invalid Genre"
+      return redirect(url_for('error_406', message = message))
     summary = request.form.get("summary")
     if string_length(5, 100, summary) == False:
-      message = "invalid summary"
-      return redirect(url_for('error_404', message = message))
+      message = "Invalid Summary"
+      return redirect(url_for('error_406', message = message))
     #get image from files
     image = request.files['image']
     url = secure_filename(image.filename)
     #save image 
     if len(url) == 0:
       print("No image supplied")
+      url = None
     else:
       image.save(os.path.join('static/uploads', url))
     #new connection
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
-    check_book = session.query(Book).filter(Book.title == title)
-    if check_book == None:
-      max_id = session.query(func.max(Book.book_id)).scalar()
-      print("highest book id is: ", max_id)
-      book_id = 1 + max_id
-      #add book to database
-      if len(url) == 0:
-        b = Book(book_id, title, author, genre, summary, None)
-      else:
-        b = Book(book_id, title, author, genre, summary, url)
-      session.add(b)
-      session.commit()
-    else:
-      print("Book already exists")
+    max_id = session.query(func.max(Book.book_id)).scalar()
+    print("highest book id is: ", max_id)
+    book_id = 1 + max_id
+    #add book to database
+    b = Book(book_id, title, author, genre, summary, url)
+    session.add(b)
+    session.commit()
+    return redirect(url_for('all_books'))
   return render_template('add_book.html', page_title= 'Add_Book')
 
 #edit book page
@@ -235,6 +227,15 @@ def update(ids):
   if request.method == 'POST':
     if request.form['edit_button'] =="Save":
       print("save button clicked")
+      image = request.files['image']
+      url = secure_filename(image.filename)
+      #save image 
+      if len(url) == 0:
+        print("No image supplied")
+        url = None
+      else:
+        image.save(os.path.join('static/uploads', url))
+      book.url = url
       book.title = request.form['title']
       book.author = request.form['author']
       book.genre = request.form['genre']
@@ -266,8 +267,8 @@ def add_review():
     book = request.form.get("book")
     review = request.form.get("review")
     if string_length(1, 100, review) == False:
-      message = "invalid review"
-      return redirect(url_for('error_404', message = message))
+      message = "Invalid Review"
+      return redirect(url_for('error_406', message = message))
     #new connection
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
@@ -286,10 +287,10 @@ def add_review():
     return redirect(url_for('book', book_id=book ))
   return render_template('add_review.html', books=books, page_title='Add Review')
 
-@app.route('/404/<message>')
-def error_404(message):
+@app.route('/406/<message>')
+def error_406(message):
   print(message)
-  return render_template('404.html', message=message, page_title='Error 404')
+  return render_template('406.html', message=message, page_title='Error 406')
 
 
 if __name__ == "__main__":

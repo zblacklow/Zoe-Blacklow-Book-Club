@@ -7,8 +7,9 @@
  <body>
    {% include 'header.html' %}
    {% include 'nav.html' %}
-   {% block content %}{% endblock %}
+   <div id="main">
+     {% block content %}{% endblock %}
+   </div>
    {% include 'footer.html' %}
-   
  </body>
 </html>
