@@ -240,21 +240,21 @@ def update(ids):
         image.save(os.path.join('static/uploads', url))
       book.url = url
       book.title = request.form['title']
-      if string_length(1, 50, title) == False:
-      message = "Invalid Title"
-      return redirect(url_for('error_406', message = message))
+      if string_length(1, 50, book.title) == False:
+        message = "Invalid Title"
+        return redirect(url_for('error_406', message = message))
       book.author = request.form['author']
-      if string_length(3, 25, author) == False:
-      message = "Invalid Author"
-      return redirect(url_for('error_406', message = message))
+      if string_length(3, 25, book.author) == False:
+        message = "Invalid Author"
+        return redirect(url_for('error_406', message = message))
       book.genre = request.form['genre']
-      if string_length(2, 15, genre) == False:
-      message = "Invalid Genre"
-      return redirect(url_for('error_406', message = message))
+      if string_length(2, 15, book.genre) == False:
+        message = "Invalid Genre"
+        return redirect(url_for('error_406', message = message))
       book.summary = request.form['summary']
-      if string_length(5, 100, summary) == False:
-      message = "Invalid Summary"
-      return redirect(url_for('error_406', message = message))
+      if string_length(5, 100, book.summary) == False:
+        message = "Invalid Summary"
+        return redirect(url_for('error_406', message = message))
       session.commit()
       return redirect(url_for('book', book_id=book_id))
       

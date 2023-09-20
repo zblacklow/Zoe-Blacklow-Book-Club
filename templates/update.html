@@ -1,25 +1,25 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h2>Edit {{ book.title }}: </h2>
+<h2>Edit {{ query_book.title }}: </h2>
 
 <form action="/update/{{ids}}" method="post" enctype="multipart/form-data">
 
 <label for="title">Title: </label></br>
-<input type="text" id="title" name="title" value="{{ book.title }}"> </br></br>
+<input type="text" id="title" name="title" value="{{ query_book.title }}"> </br></br>
 
 <label for="author">Author: </label></br>
-<input type="text" id="author" name="author" value="{{ book.author }}"> </br>
+<input type="text" id="author" name="author" value="{{ query_book.author }}"> </br>
 </br>
   
 <label for="genre">Genre: </label></br>
-<input type="text" id="genre" name="genre" value="{{ book.genre }}"> </br></br>
+<input type="text" id="genre" name="genre" value="{{ query_book.genre }}"> </br></br>
 
 <label for="summary">Summary: </label></br>
-<textarea id="summary" name="summary" >{{ book.summary }}</textarea></br></br>
+<textarea id="summary" name="summary" >{{ query_book.summary }}</textarea></br></br>
   
-{% if book.get_url() is string %}
-          {% set url =  "/static/uploads/" + book.get_url() %}
+{% if query_book.get_url() is string %}
+          {% set url =  "/static/uploads/" + query_book.get_url() %}
           <img src= {{url}} alt="my image" width="120" height="180" />
           {% endif %}
 <input type="file" name="image">
