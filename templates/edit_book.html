@@ -6,7 +6,7 @@
 
 <label for="book">Book: </label>
 <select name="book" id='book'>
-  {% for book in books %}
+  {% for book in query_books %}
     <option value={{book.book_id}}>{{book.title}}</option>
   {% endfor %}
 </select>

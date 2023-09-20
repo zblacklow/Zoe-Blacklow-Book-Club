@@ -125,6 +125,7 @@ else:
 
 app = Flask(__name__)
 
+#This is a function to check the length of the string to ensure it is a valid input into a form
 def string_length(min, max, string):
   if len(string) < min or len(string) > max:
     valid = False
@@ -132,13 +133,14 @@ def string_length(min, max, string):
     valid = True
   return(valid)
     
-# basic route
+# basic route for home page
 @app.route('/')
 def root():
     return render_template("home.html", page_title='HOME')
 
 ############################ Display books #######################################
-#Books displayed with title and image
+
+#Route to display all books in a list with title and image
 @app.route('/all_books')
 def all_books():
   #Create Session
@@ -146,21 +148,21 @@ def all_books():
   session = Session()
   #Query all books
   books = session.query(Book).all()
-  return render_template('all_books.html', page_title= 'all_books', query_results = books)
+  return render_template('all_books.html', page_title= 'all_books', query_books = books)
 
+#Route creates a page for each individual book with its details and reviews for that book
 @app.route('/books/<int:book_id>')
 def book(book_id):
   #new session
   Session = sessionmaker(bind=engine)
   session =Session()
   #info for specific book
-  results = session.query(Book).filter(Book.book_id == book_id).first()
-  print(results.url)
+  book = session.query(Book).filter(Book.book_id == book_id).first()
   #reviews for book
   reviews = session.query(Review).filter(Review.book == book_id)
-  return render_template('book.html', page_title= 'Book_Details', query_results = results, reviews = reviews)
+  return render_template('book.html', page_title= 'Book_Details', query_book = book, query_review = reviews)
   
-##Route for adding books
+#Route to add a book to database, validates input and redirects to an error page if it is invalid, finds the highest id number and adds one to assign to the new book
 @app.route('/add_book',  methods=['POST', 'GET'])
 def add_book():
   if request.method == "POST":
@@ -204,7 +206,7 @@ def add_book():
     return redirect(url_for('all_books'))
   return render_template('add_book.html', page_title= 'Add_Book')
 
-#edit book page
+#Route to select a book to edit through combo box
 @app.route('/edit_book', methods=['POST','GET'])
 def edit_book():
   Session = sessionmaker(bind=engine)
@@ -213,8 +215,9 @@ def edit_book():
   if request.method == "POST":
     book_chosen = request.form.get("book")
     return redirect(url_for('update', ids = book_chosen))
-  return render_template('edit_book.html', books=books, page_title='Edit a Book')
+  return render_template('edit_book.html', query_books = books, page_title='Edit a Book')
 
+#route to individual edit form for each book
 @app.route('/update/<ids>', methods=['POST', 'GET'])
 def update(ids):
   print(ids)
@@ -237,9 +240,21 @@ def update(ids):
         image.save(os.path.join('static/uploads', url))
       book.url = url
       book.title = request.form['title']
+      if string_length(1, 50, title) == False:
+      message = "Invalid Title"
+      return redirect(url_for('error_406', message = message))
       book.author = request.form['author']
+      if string_length(3, 25, author) == False:
+      message = "Invalid Author"
+      return redirect(url_for('error_406', message = message))
       book.genre = request.form['genre']
+      if string_length(2, 15, genre) == False:
+      message = "Invalid Genre"
+      return redirect(url_for('error_406', message = message))
       book.summary = request.form['summary']
+      if string_length(5, 100, summary) == False:
+      message = "Invalid Summary"
+      return redirect(url_for('error_406', message = message))
       session.commit()
       return redirect(url_for('book', book_id=book_id))
       
@@ -251,10 +266,10 @@ def update(ids):
       return redirect(url_for('all_books'))
       
     print("getting from update")
-  return render_template('update.html', book=book, ids=book_id, page_title='UPDATE')
+  return render_template('update.html', query_book = book, ids=book_id, page_title='UPDATE')
       
 ###########################  add Reviews #######################################
-#route to add a review
+#route to add a review, book is selected from a combo box and relationship is created
 @app.route('/add_review', methods=['POST', 'GET'])
 def add_review():
   #new connection
@@ -285,13 +300,13 @@ def add_review():
     b.reviews_written = r
     session.commit()
     return redirect(url_for('book', book_id=book ))
-  return render_template('add_review.html', books=books, page_title='Add Review')
+  return render_template('add_review.html', query_books=books, page_title='Add Review')
 
+#Route for error page takes the message from the check_stringlength function
 @app.route('/406/<message>')
 def error_406(message):
   print(message)
   return render_template('406.html', message=message, page_title='Error 406')
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)

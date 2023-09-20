@@ -1,18 +1,18 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <h2> {{query_results.title}} </h2>
-    {% if query_results.get_url() is string%}
-          {% set url =  "/static/uploads/" + query_results.get_url() %}
+    <h2> {{query_book.title}} </h2>
+    {% if query_book.get_url() is string%}
+          {% set url =  "/static/uploads/" + query_book.get_url() %}
           <img src= {{url}} alt="my image" width="120" height="180" />
           {% endif %}
     <p>
-      Author: {{query_results.author}}</br>
-      Genre: {{query_results.genre}}</br>
-      Summary: {{query_results.summary}}</br></br>
+      Author: {{query_book.author}}</br>
+      Genre: {{query_book.genre}}</br>
+      Summary: {{query_book.summary}}</br></br>
 
     <h3>Reviews: </h3>
     <div id='reviews'>
-    {% for review in reviews %}
+    {% for review in query_review %}
       <li>{{ review.review }}</li></br>
     {% endfor %}  
     </div>
