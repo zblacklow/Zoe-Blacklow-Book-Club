@@ -72,6 +72,7 @@ nav a:hover {
   float: left;
   padding: 10px 10px;
   margin-left: 10px;
+  
 }
 
 li {
@@ -79,8 +80,7 @@ li {
   border-bottom: 1.5px solid #333333;
 }
 
-
-button[type=submit] {
+button {
   background-color: #004c97;
   border: none;
   color: white;
@@ -94,13 +94,16 @@ button[type=submit]:hover {
   background-color: #012b51;
 }
 
+button[type=delete]:hover {
+  background-color: #d21f35;
+}
+
 input {
   box-sizing: border-box;
   border: 2px solid #ccc;
   border-radius: 4px;
   background-color: #f8f8f8;
 }
-
 
 textarea {
   width: 100%;
@@ -111,7 +114,6 @@ textarea {
   background-color: #f8f8f8;
   font-family:"Arial", serif;
 }
-
 
 #reviews {
   background-color: #d2f0f9 ;

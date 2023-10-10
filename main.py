@@ -25,26 +25,6 @@ class Review(Base):
     self.review = review
     self.book = book
 
-  #get methods
-  def get_review_id(self):
-    return self.review_id
-
-  def get_review(self):
-    return self.review
-
-  def get_book(self):
-    return self.book
-
-  #set methods
-  def set_review_id(self, review_id):
-    self.review_id = review_id
-
-  def set_review(self, review):
-    self.review = review
-
-  def set_book(self, book):
-    self.book = book
-
 #######################BOOK CLASS##########################################
 #book class to store title, author, genre, summary, and image
 class Book(Base):
@@ -66,6 +46,7 @@ class Book(Base):
     self.genre = genre
     self.summary = summary
     self.url = url
+    
   #get methods  
   def get_book_id(self):
     return self.book_id
@@ -79,7 +60,7 @@ class Book(Base):
   def get_genre(self):
     return self.genre
 
-  def get_summary(self):
+  def get_summary(self):  
     return self.summary
 
   def get_url(self):
@@ -147,7 +128,7 @@ def all_books():
   Session = sessionmaker(bind=engine)
   session = Session()
   #Query all books
-  books = session.query(Book).all()
+  books = session.query(Book).order_by(Book.title).all()
   return render_template('all_books.html', page_title= 'all_books', query_books = books)
 
 #Route creates a page for each individual book with its details and reviews for that book
@@ -180,7 +161,7 @@ def add_book():
       message = "Invalid Genre"
       return redirect(url_for('error_406', message = message))
     summary = request.form.get("summary")
-    if string_length(5, 100, summary) == False:
+    if string_length(5, 500, summary) == False:
       message = "Invalid Summary"
       return redirect(url_for('error_406', message = message))
     #get image from files
@@ -203,7 +184,7 @@ def add_book():
     b = Book(book_id, title, author, genre, summary, url)
     session.add(b)
     session.commit()
-    return redirect(url_for('all_books'))
+    return redirect(url_for('book', book_id = book_id))
   return render_template('add_book.html', page_title= 'Add_Book')
 
 #Route to select a book to edit through combo box
@@ -211,7 +192,7 @@ def add_book():
 def edit_book():
   Session = sessionmaker(bind=engine)
   session = Session()
-  books = session.query(Book).all()
+  books = session.query(Book).order_by(Book.title).all()
   if request.method == "POST":
     book_chosen = request.form.get("book")
     return redirect(url_for('update', ids = book_chosen))
@@ -235,24 +216,24 @@ def update(ids):
       #save image 
       if len(url) == 0:
         print("No image supplied")
-        url = None
+        
       else:
         image.save(os.path.join('static/uploads', url))
-      book.url = url
+        book.url = url
       book.title = request.form['title']
       if string_length(1, 50, book.title) == False:
         message = "Invalid Title"
         return redirect(url_for('error_406', message = message))
       book.author = request.form['author']
-      if string_length(3, 25, book.author) == False:
+      if string_length(3, 50, book.author) == False:
         message = "Invalid Author"
         return redirect(url_for('error_406', message = message))
       book.genre = request.form['genre']
-      if string_length(2, 15, book.genre) == False:
+      if string_length(2, 25, book.genre) == False:
         message = "Invalid Genre"
         return redirect(url_for('error_406', message = message))
       book.summary = request.form['summary']
-      if string_length(5, 100, book.summary) == False:
+      if string_length(5, 500, book.summary) == False:
         message = "Invalid Summary"
         return redirect(url_for('error_406', message = message))
       session.commit()
@@ -276,7 +257,7 @@ def add_review():
   Session = sessionmaker(bind=engine)
   session = Session()
   #query all books
-  books = session.query(Book).all()
+  books = session.query(Book).order_by(Book.title).all()
   if request.method == "POST":
     #get info from form
     book = request.form.get("book")
