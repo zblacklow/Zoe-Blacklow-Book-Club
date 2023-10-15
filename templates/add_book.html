@@ -2,7 +2,9 @@
 {% block content %}
 
 <h2>Add a book: </h2>
-
+{% if message  %}
+<p>Error: {{ message }}</p>
+{% endif %}
 <form action="{{ url_for("add_book")}}" method="post" enctype="multipart/form-data">
 
 <label for="title">Title: </label></br>
