@@ -146,13 +146,12 @@ def book(book_id):
 #Route to add a book to database, validates input and redirects to an error page if it is invalid, finds the highest id number and adds one to assign to the new book
 @app.route('/add_book',  methods=['POST', 'GET'])
 def add_book():
-  message = None
   if request.method == "POST":
     #get info from add book form
     title = request.form.get("title")
     if string_length(1, 50, title) == False:
       message = "Invalid Title"
-      return redirect(url_for('add_book', message = message))
+      return redirect(url_for('error_406', message = message))
     author = request.form.get("author")
     if string_length(3, 25, author) == False:
       message = "Invalid Author"
@@ -186,6 +185,7 @@ def add_book():
     session.add(b)
     session.commit()
     return redirect(url_for('book', book_id = book_id))
+  message = None
   return render_template('add_book.html', page_title= 'Add_Book', message = message)
 
 #Route to select a book to edit through combo box
