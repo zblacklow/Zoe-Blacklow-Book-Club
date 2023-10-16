@@ -12,7 +12,7 @@ import os
 
 Base = declarative_base()
 ############################REVIEW CLASS###################################
-#class to store reviews
+#class to store reviews with review id, review and book with a foriegn key connecting to the book id
 class Review(Base):
   __tablename__ = "reviews"
   review_id = Column("review_id", Integer, primary_key=True)
@@ -26,7 +26,7 @@ class Review(Base):
     self.book = book
 
 #######################BOOK CLASS##########################################
-#book class to store title, author, genre, summary, and image
+#book class to store title, author, genre, summary, and image and functions to set variable or get variable
 class Book(Base):
   __tablename__ = "books"
   book_id = Column("book_id", Integer, primary_key=True)
