@@ -26,7 +26,7 @@ class Review(Base):
     self.book = book
 
 #######################BOOK CLASS##########################################
-#book class to store title, author, genre, summary, and image and functions to set variable or get variable
+#book class to store title, author, genre, summary, and image and functions to set variable or get variable and a relationship to the reviews table
 class Book(Base):
   __tablename__ = "books"
   book_id = Column("book_id", Integer, primary_key=True)
@@ -117,7 +117,7 @@ def string_length(min, max, string):
 # basic route for home page
 @app.route('/')
 def root():
-    return render_template("home.html", page_title='HOME')
+  return render_template("home.html", page_title='HOME')
 
 ############################ Display books #######################################
 
@@ -150,19 +150,19 @@ def add_book():
     #get info from add book form
     title = request.form.get("title")
     if string_length(1, 50, title) == False:
-      message = "Invalid Title"
+      message = "Invalid Title - title must be between 1 and 50 characters"
       return redirect(url_for('error_406', message = message))
     author = request.form.get("author")
-    if string_length(3, 25, author) == False:
-      message = "Invalid Author"
+    if string_length(3, 50, author) == False:
+      message = "Invalid Author - author must be between 3 and 50 characters"
       return redirect(url_for('error_406', message = message))
     genre = request.form.get("genre")
-    if string_length(2, 15, genre) == False:
-      message = "Invalid Genre"
+    if string_length(2, 25, genre) == False:
+      message = "Invalid Genre - genre must be between 2 and 25 characters"
       return redirect(url_for('error_406', message = message))
     summary = request.form.get("summary")
     if string_length(5, 500, summary) == False:
-      message = "Invalid Summary"
+      message = "Invalid Summary - summary must be between 10 and 500 characters"
       return redirect(url_for('error_406', message = message))
     #get image from files
     image = request.files['image']
@@ -181,8 +181,8 @@ def add_book():
     print("highest book id is: ", max_id)
     book_id = 1 + max_id
     #add book to database
-    b = Book(book_id, title, author, genre, summary, url)
-    session.add(b)
+    new_book = Book(book_id, title, author, genre, summary, url)
+    session.add(new_book)
     session.commit()
     return redirect(url_for('book', book_id = book_id))
   message = None
@@ -223,19 +223,19 @@ def update(ids):
         book.url = url
       book.title = request.form['title']
       if string_length(1, 50, book.title) == False:
-        message = "Invalid Title"
+        message = "Invalid Title - title must be between 1 and 50 characters"
         return redirect(url_for('error_406', message = message))
       book.author = request.form['author']
       if string_length(3, 50, book.author) == False:
-        message = "Invalid Author"
+        message = "Invalid Author - author must be between 3 and 50 characters"
         return redirect(url_for('error_406', message = message))
       book.genre = request.form['genre']
       if string_length(2, 25, book.genre) == False:
-        message = "Invalid Genre"
+        message = "Invalid Genre - genre must be between 2 and 25 characters"
         return redirect(url_for('error_406', message = message))
       book.summary = request.form['summary']
-      if string_length(5, 500, book.summary) == False:
-        message = "Invalid Summary"
+      if string_length(10, 500, book.summary) == False:
+        message = "Invalid Summary - summary must be between 10 and 500 characters"
         return redirect(url_for('error_406', message = message))
       session.commit()
       return redirect(url_for('book', book_id=book_id))
@@ -264,22 +264,22 @@ def add_review():
     book = request.form.get("book")
     review = request.form.get("review")
     if string_length(1, 100, review) == False:
-      message = "Invalid Review"
+      message = "Invalid Review - review must be between 1 and 100 characters"
       return redirect(url_for('error_406', message = message))
     #new connection
     Base.metadata.create_all(bind=engine)
     Session = sessionmaker(bind=engine)
     session = Session()
-    b = session.query(Book).filter(Book.book_id == book)
+    review_book = session.query(Book).filter(Book.book_id == book)
     #add review
     max_id = session.query(func.max(Review.review_id)).scalar()
     print("highest review id is: ", max_id)
     review_id = 1 + max_id
-    r = Review(review_id, review, book)
-    print(r)
-    session.add(r)
+    relationship = Review(review_id, review, book)
+    print(relationship)
+    session.add(relationship)
     #relationship
-    b.reviews_written = r
+    review_book.reviews_written = relationship
     session.commit()
     return redirect(url_for('book', book_id=book ))
   return render_template('add_review.html', query_books=books, page_title='Add Review')
