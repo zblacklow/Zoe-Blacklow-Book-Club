@@ -1,17 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
- <head>
-   <title>Book Club - {{ page_title }}</title>
- </head>
- <body>
-   {% include 'header.html' %}
-   {% include 'nav.html' %}
-   <div id="main">
-     {% block content %}{% endblock %}
-   </div>
+  <head>
+     <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Club - {{ page_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+   <div class="content-wrapper">
+  <body>
+    {% include 'header.html' %}
+
+    <div id="main">
+      {% block content %}{% endblock %}
+    </div>
+
     <footer>
-        <p> Book Club :) </p>
+      <p>Book Club :)</p>
     </footer>
- </body> 
+  </body>
+   </div>
 </html>

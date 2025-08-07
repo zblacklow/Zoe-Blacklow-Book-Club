@@ -1,3 +1,30 @@
-<header>
- <h1> The Best Book Club</h1>
+  <header class="site-header">
+    <div class="header-container">
+      
+      <img id="menu-image" class="image-button" src="{{ url_for('static', filename='logo.png') }}" alt="Menu">
+      <h1>The Best Book Club</h1>
+    </div>
+
+    <div id="menu" class="menu">
+      <a href="/">Home</a>
+      <a href="/all_books">Books</a>
+      <a href="/add_book">Add a Book</a>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const image = document.getElementById('menu-image');
+      const menu = document.getElementById('menu');
+
+      const openImg = "{{ url_for('static', filename='logo.png') }}";
+      const closeImg = "{{ url_for('static', filename='logoopen.png') }}";
+
+      let isOpen = false;
+
+      image.addEventListener('click', () => {
+        isOpen = !isOpen;
+        menu.style.display = isOpen ? 'block' : 'none';
+        image.src = isOpen ? closeImg : openImg;
+      });
+    });
+  </script>
+  </div>
 </header>

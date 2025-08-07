@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<ul>
+<ul class='striped-list'>
     {% for books in query_books %}
       
       <li><a href="/books/{{ books.book_id }}">{{ books.title }}</br>
@@ -10,6 +10,7 @@
         {% set url =  "/static/uploads/" + books.get_url() %}
         <img src= {{url}} alt="my image" width="120" height="180" />
       {% endif %}</li>
+  
 </br></br>
     {% endfor %}
 </ul>
