@@ -16,6 +16,7 @@ Base = declarative_base()
 class Review(Base):
   __tablename__ = "reviews"
   review_id = Column("review_id", Integer, primary_key=True)
+  reviewNumber = Column("reviewNumber", Integer)
   review = Column("review", String)
   #connect to books table
   book = Column(Integer, ForeignKey("books.book_id"))

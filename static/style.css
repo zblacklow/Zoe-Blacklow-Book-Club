@@ -1,7 +1,7 @@
 header {
-  font-size: 35px;
+  font-size: 12px;
   font-weight: 300;
-  background-color: #004c97;
+  background-color: #89A1EF;
   color:white;
   padding: 1px;
   text-align: center;
@@ -35,14 +35,17 @@ h4:after,h4:before {
   margin-right: auto;
   width: 50%;
 }
+body {
+  min-height: 100vh;
+}
 footer {
   text-align: center;
-  background: #90d3ea;
+  background-color: #e8ebed;
   font-size: 10px;
 }
 
 nav {
-  background-color: #333;
+  background-color: #ffffff;
   overflow: hidden;
   text-align: center;
   top-margin: 1px;
@@ -50,11 +53,11 @@ nav {
 
 nav a {
   float: right;
-  color: #f2f2f2;
+  color: #000000;
   text-align: center;
   padding: 17.5px 20px;
   text-decoration: none;
-  font-size: 22px;
+  font-size: 10px;
   display: inline;
 }
 
@@ -70,14 +73,12 @@ nav a:hover {
 
 .nav_logo{
   float: left;
-  padding: 10px 10px;
+  padding-top: 5px;
   margin-left: 10px;
-  
 }
 
 li {
   list-style: none;
-  border-bottom: 1.5px solid #333333;
 }
 
 button {
@@ -116,8 +117,21 @@ textarea {
 }
 
 #reviews {
-  background-color: #d2f0f9 ;
-  border-radius: 6px;
-  padding: 5px 15px;
+  background-color: #fcfcfc ;
+  
+}
+.star-rating {
+  display: flex; /* Arranges stars horizontally */
+}
+
+.star {
+  font-size: 2em;
+  color: lightgray; /* Default color */
+  cursor: pointer;
+}
+
+.star.selected,
+.star:hover {
+  color: gold; /* Color when selected or hovered */
 }
 
