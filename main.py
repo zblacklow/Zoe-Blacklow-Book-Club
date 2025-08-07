@@ -178,6 +178,8 @@ def add_book():
     Session = sessionmaker(bind=engine)
     session = Session()
     max_id = session.query(func.max(Book.book_id)).scalar()
+    if max_id == None:
+      max_id = 0
     print("highest book id is: ", max_id)
     book_id = 1 + max_id
     #add book to database
@@ -273,6 +275,8 @@ def add_review():
     review_book = session.query(Book).filter(Book.book_id == book)
     #add review
     max_id = session.query(func.max(Review.review_id)).scalar()
+    if max_id == None:
+      max_id = 0
     print("highest review id is: ", max_id)
     review_id = 1 + max_id
     relationship = Review(review_id, review, book)
