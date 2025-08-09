@@ -169,6 +169,8 @@ textarea {
 @media (max-width: 600px) {
   body {
     font-size: 1.1em;
+    padding: 0px;
+    margin: 0px;
   }
 
   h1, h2, h3, h4 {
@@ -185,3 +187,13 @@ textarea {
     padding: 12px 0;
   }
 }
+.home {
+       /* stays fixed to viewport */
+  top: 20;
+  left: 0;
+  width: 100%;         /* exactly viewport width */
+  height: 100%;        /* exactly viewport height */
+  object-fit: cover;   /* fills without distortion */
+  object-position: center; /* keeps the image centered */
+  display: block;
+  
